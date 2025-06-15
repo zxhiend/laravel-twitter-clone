@@ -10,7 +10,7 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('like', LikeController::class)->only(['create', 'destroy']);
-    Route::resource('reply', ReplyController::class)->only(['create', 'destroy']);
-    Route::resource('retweet', RetweetController::class)->only(['create', 'destroy']);
+    Route::resource('like', LikeController::class)->only(['store', 'destroy']);
+    Route::resource('reply', ReplyController::class)->only(['store', 'destroy']);
+    Route::resource('retweet', RetweetController::class)->only(['store', 'destroy']);
 });

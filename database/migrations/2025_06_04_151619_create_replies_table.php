@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('replies', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tweet_id')->constrained()->onDelete('cascade');
+            $table->text('content');
+            $table->foreignId('reply_id')->nullable()->constrained('replies')->onDelete('');
             $table->timestamps();
+            $table->unique(['user_id', 'tweet_id'], 'user_tweet_unique');
         });
     }
 
