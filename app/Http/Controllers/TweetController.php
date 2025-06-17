@@ -8,12 +8,11 @@ use Illuminate\Http\Request;
 
 class TweetController extends Controller
 {
-    public function index()
+public function index()
     {
-        // Ambil tweet dari pengguna yang login
-        $tweets = Tweet::where('user_id', auth()->id())->latest()->get();
+        // Ambil semua tweet, urutkan berdasarkan waktu terbaru
+        $tweets = Tweet::latest()->get(); // Mengambil semua tweet dan urutkan berdasarkan waktu terbaru
 
-        // Tampilkan timeline dan kirim data tweet
         return view('timeline', compact('tweets'));
     }
 

@@ -52,10 +52,6 @@
         @method('DELETE')
         <button type="submit" class="delete-btn">Delete Tweet</button>
     </form>
-
-    <!-- Logout Button -->
-    <a href="{{ route('logout') }}" class="logout">Logout</a>
 </div>
-
 </body>
 </html>

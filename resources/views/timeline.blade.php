@@ -16,6 +16,7 @@
         .tweet { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
         .tweet p { margin: 0; }
         .tweet .user { font-weight: bold; }
+        .tweet .time { font-size: 0.9em; color: gray; }
         .logout { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #f44336; color: white; text-decoration: none; }
         .edit-btn { background-color: #008CBA; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px; }
     </style>
@@ -23,7 +24,7 @@
 <body>
 
 <header>
-    <h1>Welcome to Your Timeline</h1>
+    <h1>Twitter Clone</h1>
 </header>
 
 <div class="container">
@@ -45,7 +46,7 @@
 
     <!-- Menampilkan tweet -->
     <div class="tweets">
-        <h3>Your Tweets</h3>
+        <h3>All Tweets</h3>
         @if($tweets->isEmpty())
             <p>No tweets yet.</p>
         @else
@@ -53,7 +54,8 @@
                 <div class="tweet">
                     <p class="user">{{ $tweet->user->name }}</p>
                     <p>{{ $tweet->content }}</p>
-
+                    <p class="time">{{ $tweet->created_at }}</p> <!-- Menampilkan waktu tweet -->
+                    
                     <!-- Menampilkan tombol edit hanya untuk tweet yang dimiliki oleh pengguna yang login -->
                     @if($tweet->user_id === auth()->id())
                         <a href="{{ route('tweets.edit', $tweet) }}" class="edit-btn">Edit</a>
@@ -64,12 +66,10 @@
     </div>
 
     <!-- Logout Button -->
-    <!-- resources/views/timeline.blade.php -->
     <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-        @csrf
+        @csrf  <!-- CSRF protection -->
         <button type="submit" class="logout">Logout</button>
-    </form>
+</form>
 </div>
-
 </body>
 </html>

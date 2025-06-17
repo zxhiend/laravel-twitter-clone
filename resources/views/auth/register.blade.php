@@ -8,6 +8,14 @@
     <button type="submit">Register</button>
 </form>
 
+    <!-- Tambahkan tombol login di sini -->
+    <a href="{{ route('login') }}" style="text-decoration: none;">
+        <button type="button" style="margin-top: 10px;">
+            Login
+        </button>
+    </a>
+</form>
+
 <!-- Menampilkan error register -->
 @if ($errors->any())
     <div style="color: red; background-color: #f8d7da; padding: 10px;">

@@ -58,7 +58,10 @@
     </div>
 
     <!-- Logout Button -->
-    <a href="{{ route('logout') }}" class="logout">Logout</a>
+    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+        @csrf  <!-- CSRF protection -->
+        <button type="submit" class="logout">Logout</button>
+    </form>
 </div>
 
 </body>
