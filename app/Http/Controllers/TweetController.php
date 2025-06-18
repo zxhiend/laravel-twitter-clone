@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Tweet;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TweetController extends Controller
 {
@@ -27,7 +28,7 @@ public function index()
 
         // Simpan tweet
         Tweet::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'content' => $request->content,
         ]);
 
@@ -38,7 +39,7 @@ public function index()
         public function edit(Tweet $tweet)
     {
         // Pastikan hanya pemilik tweet yang dapat mengedit tweet
-        if ($tweet->user_id !== auth()->id()) {
+        if ($tweet->user_id !== Auth::id()) {
             return redirect()->route('timeline')->with('error', 'You are not authorized to edit this tweet.');
         }
 
@@ -48,7 +49,7 @@ public function index()
     public function update(Request $request, Tweet $tweet)
     {
         // Pastikan hanya pemilik tweet yang dapat mengedit tweet
-        if ($tweet->user_id !== auth()->id()) {
+        if ($tweet->user_id !== Auth::id()) {
             return redirect()->route('timeline')->with('error', 'You are not authorized to update this tweet.');
         }
 
@@ -66,7 +67,7 @@ public function index()
      public function destroy(Tweet $tweet)
     {
         // Pastikan hanya pemilik tweet yang bisa menghapus tweet
-        if ($tweet->user_id !== auth()->id()) {
+        if ($tweet->user_id !== Auth::id()) {
             return redirect()->route('timeline')->with('error', 'You are not authorized to delete this tweet.');
         }
 

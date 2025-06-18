@@ -3,13 +3,92 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Validator;
 
 class AuthController extends Controller
 {
+    protected $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+    /**
+     * Register a new user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function registerApi(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $result = $this->authService->register($request->all());
+
+        return response()->json([
+            'message' => 'User registered successfully',
+            'user' => $result['user'],
+            'token' => $result['token']
+        ], 201);
+    }
+
+    /**
+     * Login a user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function loginApi(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        try {
+            $result = $this->authService->login($request->all());
+
+            return response()->json([
+                'message' => 'Login successful',
+                'user' => $result['user'],
+                'token' => $result['token']
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
+        }
+    }
+
+    /**
+     * Get authenticated user
+     *
+     * @return JsonResponse
+     */
+    public function me(): JsonResponse
+    {
+        $user = $this->authService->getCurrentUser();
+        
+        return response()->json($user);
+    }
     public function showLoginForm()
     {
         return view('auth.login');
@@ -60,6 +139,19 @@ class AuthController extends Controller
         return redirect()->route('timeline')->with('success', 'Pendaftaran berhasil!');
     }
 
+    /**
+     * Logout the current user
+     *
+     * @return JsonResponse
+     */
+    public function logoutApi(): JsonResponse
+    {
+        $this->authService->logout();
+
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
+    }
     public function logout()
     {
         Auth::logout();
