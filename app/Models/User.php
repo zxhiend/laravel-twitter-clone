@@ -4,20 +4,22 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'name',
@@ -31,7 +33,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $hidden = [
         'password',
@@ -39,9 +41,9 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
     protected function casts(): array
     {
@@ -85,7 +87,7 @@ class User extends Authenticatable
      */
     // Tambahkan accessor untuk avatar URL
     // Tambahkan relasi tweets di model User
-    public function tweets()
+    public function tweets(): HasMany
     {
         return $this->hasMany(Tweet::class);
     }
@@ -95,14 +97,14 @@ class User extends Authenticatable
     {
         // Jika ada avatar, tampilkan avatar user
         if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
-            return asset('storage/'.$this->avatar);
+            return asset('storage/' . $this->avatar);
         }
-        
+
         // Pastikan path default benar
         return asset('images/default-avatar.png');
     }
 
-// Tambahkan mutator untuk username
+    // Tambahkan mutator untuk username
     public function setUsernameAttribute($value)
     {
         $this->attributes['username'] = strtolower($value);
@@ -170,5 +172,5 @@ class User extends Authenticatable
     public function followersCount(): int
     {
         return $this->followers()->count();
-    }
+}
 }
