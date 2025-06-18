@@ -47,11 +47,13 @@ class ProfileController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'bio' => 'nullable|string|max:160',
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = [
             'name' => $request->name,
+            'bio' => $request->bio, 
             // Username dihapus dari data yang diupdate
         ];
 

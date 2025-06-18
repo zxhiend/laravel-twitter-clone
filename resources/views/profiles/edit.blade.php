@@ -56,7 +56,22 @@
                                 <small class="text-muted">Username tidak dapat diubah</small>
                             </div>
                         </div>
-
+                        
+                        <div class="form-group">
+                            <label for="bio" class="font-weight-bold">Bio</label>
+                            <textarea id="bio" 
+                                    class="form-control @error('bio') is-invalid @enderror" 
+                                    name="bio"
+                                    rows="3"
+                                    maxlength="160"
+                                    placeholder="Tell us about yourself">{{ old('bio', $user->bio) }}</textarea>
+                            <small class="text-muted">Max 160 characters</small>
+                            @error('bio')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
