@@ -10,10 +10,13 @@ class TweetController extends Controller
 {
 public function index()
     {
-        // Ambil semua tweet, urutkan berdasarkan waktu terbaru
-        $tweets = Tweet::latest()->get(); // Mengambil semua tweet dan urutkan berdasarkan waktu terbaru
-
-        return view('timeline', compact('tweets'));
+    $tweets = Tweet::with(['user' => function($query) {
+            $query->withCount(['followers', 'followings']);
+        }])
+        ->latest()
+        ->paginate(10);
+    
+    return view('timeline', compact('tweets'));
     }
 
     public function store(Request $request)

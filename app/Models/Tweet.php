@@ -11,6 +11,11 @@ class Tweet extends Model
 
     protected $fillable = ['content', 'user_id'];
 
+    // app/Models/Tweet.php
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
     // Menambahkan method untuk menampilkan waktu tweet dalam format yang mudah dibaca
     public function getCreatedAtAttribute($value)
     {
