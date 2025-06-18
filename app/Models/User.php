@@ -172,5 +172,5 @@ class User extends Authenticatable
     public function followersCount(): int
     {
         return $this->followers()->count();
-    }
+}
 }

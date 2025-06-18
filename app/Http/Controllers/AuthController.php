@@ -175,6 +175,6 @@ class AuthController extends Controller
         // Store file in public disk under avatars directory
         $path = $file->storeAs('avatars', $filename, 'public');
         
-        return $path;
-    }
+        return$path;
+}
 }
