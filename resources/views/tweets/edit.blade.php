@@ -1,57 +1,114 @@
-<!-- resources/views/tweets/edit.blade.php -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Tweet</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        header { background-color: #333; color: white; padding: 10px 0; text-align: center; }
-        .container { padding: 20px; }
-        .tweet-form { margin-bottom: 20px; }
-        .tweet-form textarea { width: 100%; padding: 10px; font-size: 16px; }
-        .tweet-form button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        .logout { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #f44336; color: white; text-decoration: none; }
-        .delete-btn { background-color: #f44336; color: white; padding: 5px 10px; text-decoration: none; border-radius: 5px; margin-top: 10px; }
-    </style>
-</head>
-<body>
+@extends('layouts.app')
 
-<header>
-    <h1>Edit Tweet</h1>
-</header>
-
-<div class="container">
-    <!-- Menampilkan pesan sukses atau error -->
-    @if(session('success'))
-        <div style="color: green; background-color: #d4edda; padding: 10px;">
-            {{ session('success') }}
+@section('content')
+<div class="container-fluid px-0">
+    <!-- Header -->
+    <div class="border-bottom">
+        <div class="container">
+            <div class="d-flex align-items-center py-2">
+                <a href="{{ url()->previous() }}" class="mr-3 text-dark">
+                    <i class="fas fa-arrow-left fa-lg"></i>
+                </a>
+                <h5 class="font-weight-bold mb-0">Edit Tweet</h5>
+            </div>
         </div>
-    @endif
-
-    @if(session('error'))
-        <div style="color: red; background-color: #f8d7da; padding: 10px;">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <!-- Form untuk mengedit tweet -->
-    <div class="tweet-form">
-        <form method="POST" action="{{ route('tweets.update', $tweet) }}">
-            @csrf
-            @method('PUT') <!-- Menggunakan metode PUT untuk update -->
-            <textarea name="content" rows="4" placeholder="Edit your tweet" required>{{ old('content', $tweet->content) }}</textarea><br>
-            <button type="submit">Update Tweet</button>
-        </form>
     </div>
 
-    <!-- Tombol Hapus Tweet -->
-    <form action="{{ route('tweets.destroy', $tweet) }}" method="POST" style="display: inline-block;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="delete-btn">Delete Tweet</button>
-    </form>
+    <!-- Form Edit Tweet -->
+    <div class="container mt-3">
+        @if(session('success'))
+            <div class="alert alert-success mb-3">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger mb-3">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('tweets.update', $tweet) }}">
+            @csrf
+            @method('PUT')
+            
+            <div class="form-group">
+                <textarea name="content" 
+                          class="form-control border-0" 
+                          rows="5"
+                          style="font-size: 1.25rem; resize: none;"
+                          placeholder="What's happening?"
+                          required>{{ old('content', $tweet->content) }}</textarea>
+                @error('content')
+                    <span class="text-danger small">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <!-- Tombol Tweet -->
+                <button type="submit" class="btn btn-primary rounded-pill font-weight-bold px-4">
+                    Update Tweet
+                </button>
+
+                <!-- Tombol Delete -->
+                <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteModal">
+                    Delete Tweet
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
-</body>
-</html>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Tweet</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this tweet?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+                <form action="{{ route('tweets.destroy', $tweet) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .border-bottom {
+        border-bottom: 1px solid #e6ecf0 !important;
+    }
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #1DA1F2;
+    }
+    .btn-primary {
+        background-color: #1DA1F2;
+        border-color: #1DA1F2;
+    }
+    .btn-primary:hover {
+        background-color: #1991da;
+    }
+    .btn-outline-danger {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    textarea::placeholder {
+        color: #5b7083;
+    }
+</style>
+@endsection
