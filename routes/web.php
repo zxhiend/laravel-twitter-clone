@@ -32,7 +32,8 @@ Route::middleware('auth')->group(function () {
     // Profile Routes
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/@{username}', 'show')->name('profile');
-    Route::get('/@{username}', [ProfileController::class, 'show'])->name('profile');
+        Route::get('/@{username}/edit', 'edit')->name('profile.edit');
+        Route::put('/@{username}/update', 'update')->name('profile.update');
     });
 
     // Follow System
