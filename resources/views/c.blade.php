@@ -321,10 +321,7 @@
                         <a href="{{ route('profile', ['username' => $tweet->user->username]) }}" style="display: flex; align-items: center; flex-grow: 1; text-decoration: none; color: inherit;">
                             <img src="{{ $tweet->user->avatar_url }}" class="avatar" alt="{{ $tweet->user->username }}">
                             <div class="user-info">
-                                <span class="username">{{ $tweet->user->name }}</span>
-                                <span class="user-handle">
-                                    <span class="at-symbol">@</span>{{ $tweet->user->username }}
-                                </span>
+                                <span class="username">{{ $tweet->user->username }}</span>
                                 <span class="tweet-time">· {{ \Carbon\Carbon::parse($tweet->created_at)->diffForHumans() }}</span>
                             </div>
                         </a>
@@ -398,10 +395,7 @@
                         <a href="{{ route('profile', ['username' => $tweet->user->username]) }}" style="display: flex; align-items: center; flex-grow: 1; text-decoration: none; color: inherit;">
                             <img src="{{ $tweet->user->avatar_url }}" class="avatar" alt="{{ $tweet->user->username }}">
                             <div class="user-info">
-                                <span class="username">{{ $tweet->user->name }}</span>
-                                <span class="user-handle">
-                                    <span class="at-symbol">@</span>{{ $tweet->user->username }}
-                                </span>
+                                <span class="username">{{ $tweet->user->username }}</span>
                                 <span class="tweet-time">· {{ \Carbon\Carbon::parse($tweet->created_at)->diffForHumans() }}</span>
                             </div>
                         </a>

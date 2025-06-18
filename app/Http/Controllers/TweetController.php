@@ -8,34 +8,46 @@ use Illuminate\Http\Request;
 
 class TweetController extends Controller
 {
-public function index()
+    public function index()
     {
-    $tweets = Tweet::with(['user' => function($query) {
-            $query->withCount(['followers', 'followings']);
-        }])
-        ->latest()
-        ->paginate(10);
-    
-    return view('timeline', compact('tweets'));
+        // Query untuk semua tweet
+        $allTweets = Tweet::with(['user' => function($query) {
+                $query->withCount(['followers', 'followings']);
+            }])
+            ->latest()
+            ->paginate(10);
+        
+        // Query untuk tweet yang difollow (jika user logged in)
+        $followingTweets = collect();
+        if (auth()->check()) {
+            $followingIds = auth()->user()->followings()->pluck('users.id'); // Perbaikan disini
+            $followingTweets = Tweet::whereIn('user_id', $followingIds)
+                ->with(['user' => function($query) {
+                    $query->withCount(['followers', 'followings']);
+                }])
+                ->latest()
+                ->paginate(10);
+        }
+        
+        return view('timeline', [
+            'allTweets' => $allTweets,
+            'followingTweets' => $followingTweets
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'content' => 'required|max:280',
+        $validated = $request->validate([
+            'content' => 'required|string|max:280',
         ]);
 
-        // Simpan tweet
-        Tweet::create([
-            'user_id' => auth()->id(),
-            'content' => $request->content,
-        ]);
+        $tweet = $request->user()->tweets()->create($validated);
 
-        // Redirect ke timeline dengan pesan sukses
-        return redirect()->route('timeline')->with('success', 'Tweet created successfully!');
+        return redirect()->route('timeline')->with('success', 'Tweet posted!');
     }
 
-        public function edit(Tweet $tweet)
+
+    public function edit(Tweet $tweet)
     {
         // Pastikan hanya pemilik tweet yang dapat mengedit tweet
         if ($tweet->user_id !== auth()->id()) {
@@ -63,6 +75,7 @@ public function index()
 
         return redirect()->route('timeline')->with('success', 'Tweet updated successfully!');
     }
+
      public function destroy(Tweet $tweet)
     {
         // Pastikan hanya pemilik tweet yang bisa menghapus tweet

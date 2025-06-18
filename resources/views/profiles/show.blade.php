@@ -88,7 +88,7 @@
                              alt="{{ $tweet->user->name }}">
                         <div>
                             <div class="d-flex align-items-center mb-1">
-                                <a href="{{ route('profile', $tweet->user) }}" class="font-weight-bold text-dark mr-2">
+                                <a href="{{ route('timeline', $tweet->user) }}" class="font-weight-bold text-dark mr-2">
                                     {{ $tweet->user->name }}
                                 </a>
                                 <span class="text-muted mx-1">·</span>
