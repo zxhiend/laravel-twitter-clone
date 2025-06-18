@@ -91,12 +91,13 @@ class User extends Authenticatable
 
     // Update method getAvatarUrlAttribute
     public function getAvatarUrlAttribute()
-    {  
-        if ($this->avatar) {
-            return Storage::exists($this->avatar) 
-                ? Storage::url($this->avatar)
-                : asset('images/default-avatar.png');
+    {
+        // Jika ada avatar, tampilkan avatar user
+        if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
+            return asset('storage/'.$this->avatar);
         }
+        
+        // Pastikan path default benar
         return asset('images/default-avatar.png');
     }
 

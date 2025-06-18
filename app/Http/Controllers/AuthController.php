@@ -41,18 +41,15 @@ class AuthController extends Controller
             'username' => 'required|string|max:15|unique:users|regex:/^[a-zA-Z0-9_]+$/',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6|confirmed',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Handle avatar upload
-        $avatarPath = null;
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-        }
+        $avatarPath = $this->handleAvatarUpload($request);
 
         $user = User::create([
             'name' => $request->name,
-            'username' => strtolower($request->username), // Simpan dalam lowercase
+            'username' => strtolower($request->username),
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'avatar' => $avatarPath,
@@ -67,5 +64,25 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->route('login')->with('success', 'Anda telah logout.');
+    }
+
+    /**
+     * Handle avatar upload process
+     */
+    protected function handleAvatarUpload(Request $request): ?string
+    {
+        if (!$request->hasFile('avatar')) {
+            return null;
+        }
+
+        $file = $request->file('avatar');
+        
+        // Generate unique filename
+        $filename = 'avatar_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+        
+        // Store file in public disk under avatars directory
+        $path = $file->storeAs('avatars', $filename, 'public');
+        
+        return $path;
     }
 }

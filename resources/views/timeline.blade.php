@@ -159,9 +159,9 @@
                 <div class="tweet-header">
                     <a href="{{ route('profile', $tweet->user->username) }}" class="user-info">
                         <img src="{{ $tweet->user->avatar_url }}" 
-                             class="avatar" 
-                             alt="@{{ $tweet->user->username }}">
-                        <span class="username">@{{ $tweet->user->username }}</span>
+                            class="avatar" 
+                            alt="@{{ $tweet->user->username }}">
+                        <span class="username">{{ $tweet->user->username }}</span>
                     </a>
                     
                     @auth
