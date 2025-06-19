@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Retweet extends Model
+class Retweet extends Pivot
 {
+    protected $table = 'retweets';
+
     protected $fillable = ['user_id', 'tweet_id'];
 
     public function user()
@@ -16,15 +18,5 @@ class Retweet extends Model
     public function tweet()
     {
         return $this->belongsTo(Tweet::class);
-    }
-
-    public function likes()
-    {
-        return $this->hasMany(Like::class);
-    }
-
-    public function replies()
-    {
-        return $this->hasMany(Reply::class);
     }
 }

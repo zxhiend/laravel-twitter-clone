@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -13,21 +12,28 @@ class ProfileController extends Controller
     public function show($username)
     {
         $user = User::withCount(['followers', 'followings'])
-                  ->where('username', $username)
-                  ->firstOrFail();
-        
+            ->where('username', $username)
+            ->firstOrFail();
+
         $tweets = $user->tweets()
-                      ->with(['user' => function($query) {
-                          $query->withCount(['followers', 'followings']);
-                      }])
-                      ->latest()
-                      ->paginate(10);
-        
+            ->with(['user' => function ($query) {
+                $query->withCount(['followers', 'followings']);
+            }])
+            ->latest()
+            ->paginate(10);
+        $retweets = $user->retweets->transform(function ($tweet) {
+            $tweet->retweeted_by = Auth::user()->name;
+            return $tweet;
+        });
+        $tweets = $tweets->merge($retweets);
+        $likedTweets = $user->likes;
+
         return view('profiles.show', [
             'user' => $user,
             'tweets' => $tweets,
-            'isFollowing' => auth()->check() && auth()->user()->isFollowing($user),
-            'isCurrentUser' => auth()->check() && auth()->id() === $user->id
+            'likedTweets' => $likedTweets,
+            'isFollowing' => Auth::check() && Auth::user()->isFollowing($user),
+            'isCurrentUser' => Auth::check() && Auth::id() === $user->id,
         ]);
     }
 
@@ -39,7 +45,7 @@ class ProfileController extends Controller
     public function update(Request $request, $username)
     {
         $user = Auth::user();
-        
+
         // Verifikasi username route match dengan user yang login
         if ($user->username !== $username) {
             abort(403, 'Unauthorized action.');
@@ -53,7 +59,7 @@ class ProfileController extends Controller
 
         $data = [
             'name' => $request->name,
-            'bio' => $request->bio, 
+            'bio' => $request->bio,
             // Username dihapus dari data yang diupdate
         ];
 

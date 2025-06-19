@@ -1,13 +1,11 @@
 <?php
 
-use App\Http\Controllers\LikeController;
-use App\Http\Controllers\ReplyController;
-use App\Http\Controllers\RetweetController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\TweetController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\InteractionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TweetController;
+use Illuminate\Support\Facades\Route;
 
 // Halaman Auth
 Route::controller(AuthController::class)->group(function () {
@@ -28,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(TweetController::class)->group(function () {
         Route::get('/timeline', 'index')->name('timeline');
         Route::post('/tweets', 'store')->name('tweets.store');
+        Route::post('/tweets/{tweet}/reply', 'storeReply')->name('tweets.reply.store');
         Route::get('/tweets/{tweet}/edit', 'edit')->name('tweets.edit');
         Route::put('/tweets/{tweet}', 'update')->name('tweets.update');
         Route::delete('/tweets/{tweet}', 'destroy')->name('tweets.destroy');
@@ -50,8 +49,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/{user}/followings', 'followings')->name('followings');
     });
 
-    // Engagement Routes
-    Route::resource('like', LikeController::class)->only(['store', 'destroy']);
-    Route::resource('reply', ReplyController::class)->only(['store', 'destroy']);
-    Route::resource('retweet', RetweetController::class)->only(['store', 'destroy']);
+    // Tweet Interactions
+    Route::controller(InteractionController::class)->group(function () {
+        // Like/Unlike
+        Route::post('/tweets/{tweet}/like', 'like')->name('tweets.like');
+        
+        // Retweet/Unretweet
+        Route::post('/tweets/{tweet}/retweet', 'retweet')->name('tweets.retweet');
+        
+        // Bookmark/Unbookmark
+        Route::post('/tweets/{tweet}/bookmark', 'bookmark')->name('tweets.bookmark');
+        
+        // User's bookmarks
+        Route::get('/bookmarks', 'bookmarkView')->name('bookmarks');
+    });
 });
