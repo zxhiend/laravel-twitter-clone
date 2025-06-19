@@ -27,6 +27,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/tweets/{tweet}/edit', 'edit')->name('tweets.edit');
         Route::put('/tweets/{tweet}', 'update')->name('tweets.update');
         Route::delete('/tweets/{tweet}', 'destroy')->name('tweets.destroy');
+        Route::get('/search', 'search')->name('tweets.search');
+        Route::get('/trends', 'trends')->name('tweets.trends');
     });
 
     // Profile Routes
