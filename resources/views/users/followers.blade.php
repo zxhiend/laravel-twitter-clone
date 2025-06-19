@@ -20,14 +20,14 @@
                     @foreach($followers as $follower)
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
-                            <img src="{{ $follower->avatar ?? asset('images/default-avatar.png') }}" 
+                            <img src="{{ $follower->avatar ? asset('storage/' . $follower->avatar) : asset('images/default-avatar.png') }}" 
                                  class="rounded-circle mr-3" 
                                  width="50" 
                                  height="50" 
                                  alt="{{ $follower->name }}">
                             <div>
                                 <h5 class="mb-0">{{ $follower->name }}</h5>
-                                <small class="text-muted">@{{ $follower->username }}</small>
+                                <small class="text-muted">&commat;{{ $follower->username }}</small>
                             </div>
                         </div>
 
