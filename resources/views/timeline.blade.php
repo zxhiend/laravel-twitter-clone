@@ -30,19 +30,22 @@
         }
         
         header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 32px 15px 20px;
+            background: #fff;
+            border-bottom: 1px solid #e1e8ed;
             position: sticky;
             top: 0;
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--twitter-extra-light-gray);
             z-index: 10;
         }
         
         .header-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             margin: 0;
+            letter-spacing: -1px;
         }
         
         .tweet-form {
@@ -284,198 +287,223 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-<div class="container">
-    <header>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <!-- Avatar user yang bisa diklik -->
-            @auth
-            <a href="{{ route('profile', ['username' => auth()->user()->username]) }}" style="text-decoration: none;">
-                <img src="{{ auth()->user()->avatar_url }}" class="avatar" alt="{{ auth()->user()->username }}" style="width: 36px; height: 36px;">
-            </a>
-            @endauth
-            
-            <h1 class="header-title">Twitter Clone</h1>
-        </div>
-    </header>
-
-    <!-- Form untuk membuat tweet -->
-    <div class="tweet-form">
-        <form action="{{ route('tweets.store') }}" method="POST">
-            @csrf
-            <textarea name="content" placeholder="What's happening?" required></textarea>
-            <button type="submit">Tweet</button>
-        </form>
-    </div>
-
-    <!-- Timeline Tabs -->
-    <div class="timeline-tabs">
-        <div class="tab active" onclick="switchTab('all')">For you</div>
-        <div class="tab" onclick="switchTab('following')">Following</div>
-    </div>
-
-    <!-- All Tweets Tab -->
-    <div id="all-tweets" class="tab-content active">
-        @forelse($allTweets as $tweet)
-            <div class="tweet">
-                <div class="tweet-header">
-                        <a href="{{ route('profile', ['username' => $tweet->user->username]) }}" style="display: flex; align-items: center; flex-grow: 1; text-decoration: none; color: inherit;">
-                            <img src="{{ $tweet->user->avatar_url }}" class="avatar" alt="{{ $tweet->user->username }}">
-                            <div class="user-info">
-                                <span class="username">{{ $tweet->user->name }}</span>
-                                <span class="user-handle">
-                                    <span class="at-symbol">@</span>{{ $tweet->user->username }}
-                                </span>
-                                <span class="tweet-time">· {{ \Carbon\Carbon::parse($tweet->created_at)->diffForHumans() }}</span>
-                            </div>
-                        </a>
-                        
-                        @auth
-                            @if(auth()->id() !== $tweet->user->id)
-                                <form action="{{ route(auth()->user()->isFollowing($tweet->user) ? 'unfollow' : 'follow', $tweet->user) }}" method="POST">
-                                    @csrf
-                                    @if(auth()->user()->isFollowing($tweet->user))
-                                        @method('DELETE')
-                                    @endif
-                                    <button type="submit" class="follow-btn {{ auth()->user()->isFollowing($tweet->user) ? 'following' : '' }}">
-                                        {{ auth()->user()->isFollowing($tweet->user) ? 'Following' : 'Follow' }}
-                                    </button>
-                                </form>
-                            @endif
-                        @endauth
-                    </div>
-                
-                <div class="tweet-content">
-                    {{ $tweet->content }}
-                </div>
-                
-                @auth
-                    <div class="tweet-actions">
-                        <button class="action-btn">
-                            <i class="far fa-comment"></i>
-                        </button>
-                        <button class="action-btn">
-                            <i class="fas fa-retweet"></i>
-                        </button>
-                        <button class="action-btn">
-                            <i class="far fa-heart"></i>
-                        </button>
-                        <button class="action-btn">
-                            <i class="far fa-share-square"></i>
-                        </button>
-                        
-                        @if($tweet->user_id === auth()->id())
-                            <a href="{{ route('tweets.edit', $tweet) }}" class="action-btn">
-                                <i class="far fa-edit"></i>
-                            </a>
-                            <form action="{{ route('tweets.destroy', $tweet) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="action-btn" style="color: #f44336;">
-                                    <i class="far fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        @endif
-                    </div>
-                @endauth
+<div style="display: flex; justify-content: center; background: #f5f8fa; min-height: 100vh;">
+    <div class="container" style="flex: 1 1 600px; max-width: 600px; background: #fff;">
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+        <header style="display: flex; align-items: center; justify-content: space-between; padding: 15px 32px 15px 20px; background: #fff; border-bottom: 1px solid #e1e8ed; position: sticky; top: 0; z-index: 10;">
+            <div style="display: flex; align-items: center;">
+                <a href="{{ route('profile', ['username' => auth()->user()->username ?? '' ]) }}" style="text-decoration: none;">
+                    <img src="{{ auth()->user()->avatar_url ?? asset('images/default-avatar.png') }}" class="avatar" alt="avatar" style="width: 36px; height: 36px; border-radius: 50%; margin-right: 16px; object-fit: cover;">
+                </a>
+                <h1 class="header-title" style="font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -1px;">Twitter Clone</h1>
             </div>
-        @empty
-            <div class="empty-tweet">
-                <p>No tweets yet. Be the first to tweet!</p>
-            </div>
-        @endforelse
-        
-        <div class="pagination">
-            {{ $allTweets->links() }}
-        </div>
-    </div>
+            <form method="GET" action="{{ route('tweets.search') }}" style="display: flex; align-items: center; background: #f5f8fa; border-radius: 9999px; padding: 2px 8px; border: 1px solid #e1e8ed;">
+                <input type="text" name="q" placeholder="Search tweets..." style="border: none; background: transparent; outline: none; font-size: 16px; padding: 8px 12px; width: 180px; font-family: inherit;">
+                <button type="submit" style="background: #1da1f2; color: #fff; border: none; border-radius: 9999px; padding: 6px 18px; font-weight: bold; font-size: 15px; cursor: pointer; margin-left: 4px;">Search</button>
+            </form>
+        </header>
 
-    <!-- Following Tweets Tab -->
-    <div id="following-tweets" class="tab-content">
-        @if(auth()->check())
-            @forelse($followingTweets as $tweet)
+        <!-- Form untuk membuat tweet -->
+        <div class="tweet-form">
+            <form action="{{ route('tweets.store') }}" method="POST">
+                @csrf
+                <textarea name="content" placeholder="What's happening?" required></textarea>
+                <button type="submit">Tweet</button>
+            </form>
+        </div>
+
+        <!-- Timeline Tabs -->
+        <div class="timeline-tabs">
+            <div class="tab active" onclick="switchTab('all')">For you</div>
+            <div class="tab" onclick="switchTab('following')">Following</div>
+        </div>
+
+        <!-- All Tweets Tab -->
+        <div id="all-tweets" class="tab-content active">
+            @forelse($allTweets as $tweet)
                 <div class="tweet">
                     <div class="tweet-header">
-                        <a href="{{ route('profile', ['username' => $tweet->user->username]) }}" style="display: flex; align-items: center; flex-grow: 1; text-decoration: none; color: inherit;">
-                            <img src="{{ $tweet->user->avatar_url }}" class="avatar" alt="{{ $tweet->user->username }}">
-                            <div class="user-info">
-                                <span class="username">{{ $tweet->user->name }}</span>
-                                <span class="user-handle">
-                                    <span class="at-symbol">@</span>{{ $tweet->user->username }}
-                                </span>
-                                <span class="tweet-time">· {{ \Carbon\Carbon::parse($tweet->created_at)->diffForHumans() }}</span>
-                            </div>
-                        </a>
-                        
-                        @auth
-                            @if(auth()->id() !== $tweet->user->id)
-                                <form action="{{ route(auth()->user()->isFollowing($tweet->user) ? 'unfollow' : 'follow', $tweet->user) }}" method="POST">
-                                    @csrf
-                                    @if(auth()->user()->isFollowing($tweet->user))
-                                        @method('DELETE')
-                                    @endif
-                                    <button type="submit" class="follow-btn {{ auth()->user()->isFollowing($tweet->user) ? 'following' : '' }}">
-                                        {{ auth()->user()->isFollowing($tweet->user) ? 'Following' : 'Follow' }}
-                                    </button>
-                                </form>
-                            @endif
-                        @endauth
-                    </div>
+                            <a href="{{ route('profile', ['username' => $tweet->user->username]) }}" style="display: flex; align-items: center; flex-grow: 1; text-decoration: none; color: inherit;">
+                                <img src="{{ $tweet->user->avatar_url }}" class="avatar" alt="{{ $tweet->user->username }}">
+                                <div class="user-info">
+                                    <span class="username">{{ $tweet->user->name }}</span>
+                                    <span class="user-handle">
+                                        <span class="at-symbol">@</span>{{ $tweet->user->username }}
+                                    </span>
+                                    <span class="tweet-time">· {{ \Carbon\Carbon::parse($tweet->created_at)->diffForHumans() }}</span>
+                                </div>
+                            </a>
+                            
+                            @auth
+                                @if(auth()->id() !== $tweet->user->id)
+                                    <form action="{{ route(auth()->user()->isFollowing($tweet->user) ? 'unfollow' : 'follow', $tweet->user) }}" method="POST">
+                                        @csrf
+                                        @if(auth()->user()->isFollowing($tweet->user))
+                                            @method('DELETE')
+                                        @endif
+                                        <button type="submit" class="follow-btn {{ auth()->user()->isFollowing($tweet->user) ? 'following' : '' }}">
+                                            {{ auth()->user()->isFollowing($tweet->user) ? 'Following' : 'Follow' }}
+                                        </button>
+                                    </form>
+                                @endif
+                            @endauth
+                        </div>
                     
                     <div class="tweet-content">
                         {{ $tweet->content }}
                     </div>
                     
-                    <div class="tweet-actions">
-                        <button class="action-btn">
-                            <i class="far fa-comment"></i>
-                        </button>
-                        <button class="action-btn">
-                            <i class="fas fa-retweet"></i>
-                        </button>
-                        <button class="action-btn">
-                            <i class="far fa-heart"></i>
-                        </button>
-                        <button class="action-btn">
-                            <i class="far fa-share-square"></i>
-                        </button>
-                        
-                        @if($tweet->user_id === auth()->id())
-                            <a href="{{ route('tweets.edit', $tweet) }}" class="action-btn">
-                                <i class="far fa-edit"></i>
-                            </a>
-                            <form action="{{ route('tweets.destroy', $tweet) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="action-btn" style="color: #f44336;">
-                                    <i class="far fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        @endif
-                    </div>
+                    @auth
+                        <div class="tweet-actions">
+                            <button class="action-btn">
+                                <i class="far fa-comment"></i>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-retweet"></i>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-heart"></i>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-share-square"></i>
+                            </button>
+                            
+                            @if($tweet->user_id === auth()->id())
+                                <a href="{{ route('tweets.edit', $tweet) }}" class="action-btn">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <form action="{{ route('tweets.destroy', $tweet) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="action-btn" style="color: #f44336;">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    @endauth
                 </div>
             @empty
                 <div class="empty-tweet">
-                    <p>No tweets from people you follow. Follow more users to see their tweets!</p>
+                    <p>No tweets yet. Be the first to tweet!</p>
                 </div>
             @endforelse
             
             <div class="pagination">
-                {{ $followingTweets->links() }}
+                {{ $allTweets->links() }}
             </div>
-        @else
-            <div class="empty-tweet">
-                <p>Please <a href="{{ route('login') }}">login</a> to see tweets from people you follow.</p>
-            </div>
-        @endif
-    </div>
+        </div>
 
-    <!-- Logout Button -->
-    @auth
-    <form action="{{ route('logout') }}" method="POST">
-        @csrf
-        <button type="submit" class="logout-btn">Log out</button>
-    </form>
-    @endauth
+        <!-- Following Tweets Tab -->
+        <div id="following-tweets" class="tab-content">
+            @if(auth()->check())
+                @forelse($followingTweets as $tweet)
+                    <div class="tweet">
+                        <div class="tweet-header">
+                            <a href="{{ route('profile', ['username' => $tweet->user->username]) }}" style="display: flex; align-items: center; flex-grow: 1; text-decoration: none; color: inherit;">
+                                <img src="{{ $tweet->user->avatar_url }}" class="avatar" alt="{{ $tweet->user->username }}">
+                                <div class="user-info">
+                                    <span class="username">{{ $tweet->user->name }}</span>
+                                    <span class="user-handle">
+                                        <span class="at-symbol">@</span>{{ $tweet->user->username }}
+                                    </span>
+                                    <span class="tweet-time">· {{ \Carbon\Carbon::parse($tweet->created_at)->diffForHumans() }}</span>
+                                </div>
+                            </a>
+                            
+                            @auth
+                                @if(auth()->id() !== $tweet->user->id)
+                                    <form action="{{ route(auth()->user()->isFollowing($tweet->user) ? 'unfollow' : 'follow', $tweet->user) }}" method="POST">
+                                        @csrf
+                                        @if(auth()->user()->isFollowing($tweet->user))
+                                            @method('DELETE')
+                                        @endif
+                                        <button type="submit" class="follow-btn {{ auth()->user()->isFollowing($tweet->user) ? 'following' : '' }}">
+                                            {{ auth()->user()->isFollowing($tweet->user) ? 'Following' : 'Follow' }}
+                                        </button>
+                                    </form>
+                                @endif
+                            @endauth
+                        </div>
+                        
+                        <div class="tweet-content">
+                            {{ $tweet->content }}
+                        </div>
+                        
+                        <div class="tweet-actions">
+                            <button class="action-btn">
+                                <i class="far fa-comment"></i>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-retweet"></i>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-heart"></i>
+                            </button>
+                            <button class="action-btn">
+                                <i class="far fa-share-square"></i>
+                            </button>
+                            
+                            @if($tweet->user_id === auth()->id())
+                                <a href="{{ route('tweets.edit', $tweet) }}" class="action-btn">
+                                    <i class="far fa-edit"></i>
+                                </a>
+                                <form action="{{ route('tweets.destroy', $tweet) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="action-btn" style="color: #f44336;">
+                                        <i class="far fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="empty-tweet">
+                        <p>No tweets from people you follow. Follow more users to see their tweets!</p>
+                    </div>
+                @endforelse
+                
+                <div class="pagination">
+                    {{ $followingTweets->links() }}
+                </div>
+            @else
+                <div class="empty-tweet">
+                    <p>Please <a href="{{ route('login') }}">login</a> to see tweets from people you follow.</p>
+                </div>
+            @endif
+        </div>
+
+        <!-- Logout Button -->
+        @auth
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="logout-btn">Log out</button>
+        </form>
+        @endauth
+    </div>
+    <aside style="width: 250px; background: transparent; border-radius: 16px; box-shadow: none; padding: 0; height: fit-content; align-self: flex-start; position: fixed; right: 3vw; top: 80px; z-index: 100;">
+        <div style="background: #fff; border-radius: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); padding: 8px 16px 16px 16px;">
+            <h4 style="font-weight: bold; font-size: 18px; margin-bottom: 10px; margin-top: 2px;">Trending</h4>
+            <ol style="padding-left: 1.2em; margin: 0;">
+                @foreach($trends as $i => $trend)
+                    <li style="margin-bottom: 10px; font-size: 15px;">
+                        @if($trend['type'] === 'hashtag')
+                            <a href="{{ route('tweets.search', ['q' => '#' . $trend['value']]) }}" style="font-weight: 600; color: #1da1f2; text-decoration: none;">#{{ $trend['value'] }}</a>
+                        @else
+                            <a href="{{ route('tweets.search', ['q' => $trend['value']]) }}" style="font-weight: 600; color: #1da1f2; text-decoration: none;">{{ $trend['value'] }}</a>
+                        @endif
+                        <span style="color: #657786; font-size: 13px;">{{ $trend['count'] }} posts</span>
+                    </li>
+                @endforeach
+            </ol>
+        </div>
+    </aside>
 </div>
 
 <script>
