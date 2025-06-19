@@ -91,6 +91,7 @@
                                 <a href="{{ route('timeline', $tweet->user) }}" class="font-weight-bold text-dark mr-2">
                                     {{ $tweet->user->name }}
                                 </a>
+                                <small class="text-muted">&commat;{{ $tweet->user->username }}</small>
                                 <span class="text-muted mx-1">·</span>
                                 <span class="text-muted">{{ \Carbon\Carbon::parse($tweet->created_at)->diffForHumans() }}</span>
                             </div>
