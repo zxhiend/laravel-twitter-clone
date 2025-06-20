@@ -12,7 +12,7 @@
                 <x-button type="submit" class="ml-1">Search</x-button>
             </form>
         </header>
-        <ul class="list-disc pl-6">
+        <ul class="list-disc pl-6 mt-6">
             @forelse($trends as $trend)
                 <li class="mb-2 text-base font-medium text-gray-700 truncate overflow-hidden max-w-xs">
                     <span class="inline-block max-w-[180px] truncate align-bottom">#{{ \Illuminate\Support\Str::limit($trend->tag, 20) }}</span> <span class="text-gray-400">({{ $trend->count }})</span>

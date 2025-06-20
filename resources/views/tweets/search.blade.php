@@ -35,7 +35,7 @@
                 </a>
             </div>
             @if ($tab === 'people')
-                <h4 class="font-bold text-lg">People:</h4>
+                <h4 class="font-bold text-lg pl-6">People:</h4>
                 @forelse($users as $user)
                     <div class="flex items-start gap-3 py-4 px-5 border-b border-gray-300">
                         <img src="{{ $user->avatar_url ?? asset('images/default-avatar.png') }}"
