@@ -32,7 +32,7 @@
                 @csrf
                 <div class="mb-4">
                     <label for="name" class="block mb-1 font-semibold">Full Name</label>
-                    <input id="name" type="text" name="name" value="{{ old('name') }}" required
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required maxlength="15"
                         autocomplete="name" autofocus
                         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500">
                 </div>

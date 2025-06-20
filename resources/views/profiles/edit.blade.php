@@ -27,7 +27,7 @@
                             <div class="mb-4">
                                 <label for="name" class="block font-semibold mb-1">Nama</label>
                                 <input id="name" type="text" name="name" value="{{ old('name', $user->name) }}"
-                                    required
+                                    required maxlength="15"
                                     class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 @error('name') border-red-500 @enderror">
                                 @error('name')
                                     <span class="text-red-500 text-xs">{{ $message }}</span>

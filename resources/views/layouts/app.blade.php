@@ -72,8 +72,8 @@
         <div class="lg:col-span-2 max-h-screen min-h-screen overflow-y-auto scroll no-scrollbar">
             @yield('content')
         </div>
-        <aside class="bg-white rounded-2xl sticky top-0 h-72 shadow p-4" x-data="trendingData()"
-            x-init="loadTrends()">
+        <aside class="bg-white rounded-2xl sticky top-0 h-72 shadow p-4 overflow-y-auto"
+            x-data="trendingData()" x-init="loadTrends()">
             <h4 class="font-bold text-lg mb-3 mt-0.5">Trending</h4>
             <div x-show="isLoading" class="text-center py-10 text-gray-400">
                 <p>Loading...</p>
@@ -81,12 +81,12 @@
             <div x-show="!isLoading && trends.length === 0" class="text-center py-10 text-gray-400">
                 <p>No trends yet.</p>
             </div>
-            <ol class="pl-5" x-show="!isLoading && trends.length > 0">
+            <ol class="pl-5 space-y-1" x-show="!isLoading && trends.length > 0">
                 <template x-for="(trend, index) in trends" :key="trend.id || index">
                     <li class="mb-2.5 text-base">
-                        <a :href="getTrendUrl(trend)" class="font-semibold text-sky-500 no-underline hover:underline"
-                            x-text="getTrendText(trend)"></a>
-                        <br>
+                        <a :href="getTrendUrl(trend)"
+                            class="font-semibold text-sky-500 no-underline hover:underline block truncate max-w-[180px]"
+                            x-text="getTrendText(trend).length > 20 ? getTrendText(trend).slice(0, 20) + '…' : getTrendText(trend)"></a>
                         <span class="text-gray-400 text-xs" x-text="`${trend.count} posts`"></span>
                     </li>
                 </template>

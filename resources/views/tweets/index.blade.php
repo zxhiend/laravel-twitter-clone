@@ -29,7 +29,7 @@
                     </form>
                 </header>
                 <div class="px-0">
-                    <div class="px-5 py-4 border-b border-gray-200">
+                    <div class="px-5 py-4 border-b border-gray-200" x-data="{ content: '', max: 280 }">
                         <form action="{{ route('tweets.store') }}" method="POST" class="flex flex-col gap-2">
                             @csrf
                             <div class="flex items-start">
@@ -40,10 +40,14 @@
                                 </a>
                                 <textarea name="content"
                                     class="w-full border border-gray-300 p-3 text-xl resize-none focus:ring-2 focus:ring-sky-500 focus:border-transparent placeholder-gray-400 rounded-lg transition-all"
-                                    rows="5" placeholder="What's happening?" required></textarea>
+                                    rows="5" placeholder="What's happening?" required maxlength="280"
+                                    x-model="content"></textarea>
                             </div>
-                            <div class="flex justify-end">
-                                <x-button type="submit" class="ml-1">Tweet</x-button>
+                            <div class="flex justify-between items-center mt-1">
+                                <span class="text-xs text-gray-400 ml-1"
+                                    x-text="max - content.length + ' characters left'"></span>
+                                <button type="submit" class="ml-1 px-7 py-2 bg-sky-500 text-white rounded-full font-bold text-sm transition hover:bg-sky-600 disabled:opacity-50 cursor-pointer"
+                                    x-bind:disabled="content.length > max">Tweet</button>
                             </div>
                         </form>
                     </div>

@@ -14,7 +14,7 @@
                 <div class="flex-1">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h2 class="font-bold text-2xl mb-1">{{ $user->name }}</h2>
+                            <h2 class="font-bold text-2xl mb-1">{{ \Illuminate\Support\Str::limit($user->name, 15) }}</h2>
                             <p class="text-gray-500 mb-3">{{ '@' . $user->username }}</p>
                         </div>
                         @auth

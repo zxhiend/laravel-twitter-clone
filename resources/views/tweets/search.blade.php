@@ -2,15 +2,10 @@
 @section('title', 'Search Tweets')
 @section('content')
     <div class="flex justify-center bg-gray-100 min-h-screen relative">
-        <div class="absolute left-0 top-8 w-full flex justify-center pointer-events-none z-20">
-            <a href="{{ route('timeline') }}"
-                class="pointer-events-auto bg-white border border-gray-300 rounded-full px-6 py-2 font-semibold text-sky-500 no-underline shadow transition-colors absolute -left-32 top-0 hover:bg-gray-100">&larr;
-                Timeline</a>
-        </div>
         <div class="flex-1 max-w-xl bg-white relative mt-0 p-0">
             <h2 class="font-extrabold text-2xl text-center">Search Tweets</h2>
             <form method="GET" action="{{ route('tweets.search') }}"
-                class="flex items-center bg-gray-100 rounded-full px-2 py-0.5 border border-gray-300 mb-4 gap-0">
+                class="flex items-center bg-gray-100 rounded-full px-2 py-0.5 border border-gray-300 mb-4 gap-0 max-w-md mx-auto">
                 <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search tweets..."
                     required class="border-none bg-transparent outline-none text-base px-3 py-2 w-full font-sans" />
                 <button type="submit"
@@ -56,7 +51,7 @@
                     <p>No users found.</p>
                 @endforelse
             @elseif($tab === 'top' || $tab === 'latest')
-                <h4 class="font-bold text-lg">Results:</h4>
+                <h4 class="font-bold text-lg pl-6">Results:</h4>
                 @forelse($results as $tweet)
                     <x-tweet :tweet="$tweet" :action="false" />
                 @empty
