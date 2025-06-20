@@ -15,7 +15,8 @@
         "laravel/sanctum": "^4.1",
         "laravel/scout": "^10.15",
         "laravel/tinker": "^2.10.1",
-        "meilisearch/meilisearch-php": "^1.15"
+        "meilisearch/meilisearch-php": "^1.15",
+        "tightenco/ziggy": "^2.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

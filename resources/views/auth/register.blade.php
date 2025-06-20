@@ -1,144 +1,81 @@
-<!-- resources/views/auth/register.blade.php -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Twitter Clone</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f8fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .register-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            width: 350px;
-        }
-        .logo {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #1DA1F2;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #1DA1F2;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-login {
-            background-color: white;
-            color: #1DA1F2;
-            border: 1px solid #1DA1F2;
-            margin-top: 10px;
-        }
-        .error-message {
-            color: red;
-            background-color: #f8d7da;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .success-message {
-            color: green;
-            background-color: #d4edda;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-    </style>
+    <title>Twitter Clone - @yield('title')</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    @routes
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
+
 <body>
-    <div class="register-container">
-        <div class="logo">Twitter Clone</div>
-
-        <!-- Menampilkan error register -->
-        @if ($errors->any())
-            <div class="error-message">
-                @foreach ($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                @endforeach
-            </div>
-        @endif
-
-        <!-- Menampilkan pesan sukses jika ada -->
-        @if(session('success'))
-            <div class="success-message">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
-            @csrf
-
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input id="name" type="text" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-            </div>
-
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input id="username" type="text" name="username" value="{{ old('username') }}" required autocomplete="username">
-                <small>Will be used for your profile URL (@username)</small>
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email">
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input id="password" type="password" name="password" required autocomplete="new-password">
-            </div>
-
-            <div class="form-group">
-                <label for="password-confirm">Confirm Password</label>
-                <input id="password-confirm" type="password" name="password_confirmation" required autocomplete="new-password">
-            </div>
-
-            <div class="form-group">
-                <label for="avatar">Profile Picture (Optional)</label>
-                <input id="avatar" type="file" name="avatar">
-            </div>
-
-            <button type="submit" class="btn">Register</button>
-        </form>
-
-        <a href="{{ route('login') }}" style="text-decoration: none;">
-            <button type="button" class="btn btn-login">
-                Already have an account? Login
-            </button>
-        </a>
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="bg-white p-8 rounded-lg shadow w-full max-w-md">
+            <div class="text-center mb-6 text-sky-500 text-2xl font-bold">Twitter Clone</div>
+            @if ($errors->any())
+                <div class="bg-red-100 text-red-700 px-4 py-3 rounded mb-4">
+                    @foreach ($errors->all() as $error)
+                        <p>{{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+            @if (session('success'))
+                <div class="bg-green-100 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+            <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="mb-4">
+                    <label for="name" class="block mb-1 font-semibold">Full Name</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required maxlength="15"
+                        autocomplete="name" autofocus
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div class="mb-4">
+                    <label for="username" class="block mb-1 font-semibold">Username</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">@</div>
+                        <input id="username" type="text" name="username" value="{{ old('username') }}" required
+                            autocomplete="username"
+                            class="w-full px-3 py-2 border border-gray-300 rounded pl-10 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+                    <small class="text-gray-400">Will be used for your profile URL (@username)</small>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block mb-1 font-semibold">Email</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required
+                        autocomplete="email"
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="block mb-1 font-semibold">Password</label>
+                    <input id="password" type="password" name="password" required autocomplete="new-password"
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div class="mb-4">
+                    <label for="password-confirm" class="block mb-1 font-semibold">Confirm Password</label>
+                    <input id="password-confirm" type="password" name="password_confirmation" required
+                        autocomplete="new-password"
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div class="mb-4">
+                    <label for="avatar" class="block mb-1 font-semibold">Profile Picture (Optional)</label>
+                    <input id="avatar" type="file" name="avatar"
+                        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <button type="submit"
+                    class="w-full py-2 cursor-pointer bg-sky-500 text-white rounded-full font-bold hover:bg-sky-600 transition">Register</button>
+            </form>
+            <a href="{{ route('login') }}" class="block mt-4">
+                <button type="button"
+                    class="w-full py-2 cursor-pointer border border-sky-500 text-sky-500 rounded-full font-bold hover:bg-sky-50 transition">Already
+                    have an account? Login</button>
+            </a>
+        </div>
     </div>
 </body>
-</html>

@@ -4,11 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -82,7 +82,7 @@ class User extends Authenticatable
     /**
      * Follow a user
      *
-     * @param User $user The user to follow
+     * @param  User  $user  The user to follow
      * @return array Result of the operation
      */
     // Tambahkan accessor untuk avatar URL
@@ -97,7 +97,7 @@ class User extends Authenticatable
     {
         // Jika ada avatar, tampilkan avatar user
         if ($this->avatar && Storage::disk('public')->exists($this->avatar)) {
-            return asset('storage/' . $this->avatar);
+            return asset('storage/'.$this->avatar);
         }
 
         // Pastikan path default benar
@@ -109,14 +109,16 @@ class User extends Authenticatable
     {
         $this->attributes['username'] = strtolower($value);
     }
+
     public function follow(User $user): array
     {
         if ($this->id === $user->id) {
             return ['status' => 'error', 'message' => 'You cannot follow yourself'];
         }
 
-        if (!$this->isFollowing($user)) {
+        if (! $this->isFollowing($user)) {
             $this->followings()->attach($user->id);
+
             return ['status' => 'success', 'message' => 'Successfully followed user'];
         }
 
@@ -126,7 +128,7 @@ class User extends Authenticatable
     /**
      * Unfollow a user
      *
-     * @param User $user The user to unfollow
+     * @param  User  $user  The user to unfollow
      * @return array Result of the operation
      */
     public function unfollow(User $user): array
@@ -137,6 +139,7 @@ class User extends Authenticatable
 
         if ($this->isFollowing($user)) {
             $this->followings()->detach($user->id);
+
             return ['status' => 'success', 'message' => 'Successfully unfollowed user'];
         }
 
@@ -146,8 +149,7 @@ class User extends Authenticatable
     /**
      * Check if the user is following another user
      *
-     * @param User $user The user to check
-     * @return bool
+     * @param  User  $user  The user to check
      */
     public function isFollowing(User $user): bool
     {
@@ -156,8 +158,6 @@ class User extends Authenticatable
 
     /**
      * Get the count of users this user follows
-     *
-     * @return int
      */
     public function followingCount(): int
     {
@@ -166,11 +166,24 @@ class User extends Authenticatable
 
     /**
      * Get the count of followers
-     *
-     * @return int
      */
     public function followersCount(): int
     {
         return $this->followers()->count();
-}
+    }
+
+    public function retweets(): BelongsToMany
+    {
+        return $this->belongsToMany(Tweet::class, 'retweets', 'user_id', 'tweet_id')->using(Retweet::class);
+    }
+
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(Tweet::class, 'likes', 'user_id', 'tweet_id')->using(Like::class);
+    }
+
+    public function bookmarks(): BelongsToMany
+    {
+        return $this->belongsToMany(Tweet::class, 'bookmarks', 'user_id', 'tweet_id')->using(Bookmark::class);
+    }
 }
