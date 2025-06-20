@@ -49,7 +49,7 @@
                             <span class="font-bold text-gray-900 mr-1.5"><a
                                     href="{{ route('profile', ['username' => $user->username]) }}"
                                     class="text-gray-900 no-underline">{{ $user->name }}</a></span>
-                            <span class="text-gray-400 text-sm mr-1.5">@{{ $user - > username }}</span>
+                            <span class="text-gray-400 text-sm mr-1.5">&commat;{{ $user->username }}</span>
                         </div>
                     </div>
                 @empty
