@@ -17,7 +17,7 @@ use App\Http\Controllers\UserController;
 */
 
 // Public routes
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'registerApi']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Protected routes
