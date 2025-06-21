@@ -9,16 +9,14 @@ The aim is to demonstrate how core social-media features can be modelled and imp
 
 | Tier             | Module          | Status | Description                                           |
 | ---------------- | --------------- | ------ | ----------------------------------------------------- |
-| **MVP**          | Auth & Profile  | [x]    | JWT/Sanctum-based register & login, view/edit profile |
-|                  | Tweet Service   | [-]    | CRUD for tweets (text + optional media)               |
-|                  | Follow Graph    | [x]    | Follow / unfollow, list followers & following         |
-|                  | Home Timeline   | [x]    | _Fan-out-on-read_ feed of own + followee tweets       |
-| **Nice-to-Have** | Engagements     | [x]    | Likes, retweets, threaded replies                     |
-|                  | Search + Trends | [x]    | Full-text search & simple hashtag ranking             |
-| **Stretch**      | Notifications   | [ ]    | Event-driven “X liked your tweet” inbox               |
-|                  | Direct Messages | [ ]    | Real-time 1-to-1 chat via WebSockets                  |
-
-> **Tip :** Finish MVP first (Auth ➜ Timeline). Add the rest if time allows.
+| **MVP**          | Auth & Profile  | [✓]    | JWT/Sanctum-based register & login, view/edit profile |
+|                  | Tweet Service   | [✓}    | CRUD for tweets (text + optional media)               |
+|                  | Follow Graph    | [✓]    | Follow / unfollow, list followers & following         |
+|                  | Home Timeline   | [✓]    | _Fan-out-on-read_ feed of own + followee tweets       |
+| **Nice-to-Have** | Engagements     | [✓]    | Likes, retweets, threaded replies                     |
+|                  | Search + Trends | [✓]    | Full-text search & simple hashtag ranking             |
+| **Stretch**      | Notifications   | [x]    | Event-driven “X liked your tweet” inbox               |
+|                  | Direct Messages | [x]    | Real-time 1-to-1 chat via WebSockets                  |
 
 ---
 
